@@ -1,5 +1,6 @@
 ﻿using Harmony;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -143,6 +144,20 @@ namespace CustomCar
                 }
             }
             return false;
+        }
+    }
+}
+
+//Inject code to trigger custom cooldown animation
+[HarmonyPatch(typeof(CarLogic), "CoolDown")]
+internal class CoolDownMod
+{
+    static void Postfix(CarLogic __instance, float amount, bool playSound = true)
+    {
+        Animation carAnimation = (Animation) Harmony.AccessTools.Field(typeof(CarLogic), "animation_").GetValue(__instance);
+        if(carAnimation["Cooldown"])
+        {
+            carAnimation.Play("Cooldown");
         }
     }
 }
